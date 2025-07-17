@@ -1,0 +1,68 @@
+############################
+#         NETWORKS         #
+############################
+networks:
+  intranet-net:                      # réseau privé (simule 192.168.10.0/24)
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.10.0/24
+  extranet-net:                      # réseau public (simule 150.10.0.0/16)
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 150.10.0.0/16
+
+############################
+#         SERVICES         #
+############################
+
+services:
+  web:
+    build: ./apache
+    container_name: apache-web
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./apache/certs:/usr/local/apache2/conf/certs
+      - ./web-data:/usr/local/apache2/htdocs
+    networks:
+      extranet-net:
+        aliases:
+          - extranet.rainbowbank.com
+          - admin.rainbowbank.com
+      intranet-net:
+        aliases:               
+          - extranet.rainbowbank.com
+          - admin.rainbowbank.com
+
+
+
+  # ────── FTP sécurisé (réseau privé UNIQUEMENT) ───────────
+  ftps-secure:
+    build: ./ftps-secure
+    container_name: ftps-secure
+    # 🔹 PAS de ports publiés = inaccessible depuis l’extérieur
+    #   (si tu dois tester depuis le host, décommente provisoirement)
+    # ports:
+    #   - "21:21"
+    #   - "21100-21110:21100-21110"
+    cap_add:
+      - NET_ADMIN                  # Fail2Ban + nftables
+    volumes:
+      - ./web-data:/srv/sites
+    networks:
+      - intranet-net               # UNIQUEMENT le réseau privé
+    restart: unless-stopped
+
+  # ────── Navigateur de test (LAN) ──────────────────────────
+  firefox:
+    image: jlesage/firefox
+    ports:
+      - "5800:5800"                # VNC/NoVNC d’accès local
+    environment:
+      DISPLAY_WIDTH: 1280
+      DISPLAY_HEIGHT: 720
+    networks:
+      - intranet-net     

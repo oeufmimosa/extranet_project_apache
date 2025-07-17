@@ -1,0 +1,12 @@
+[DEFAULT]
+bantime  = 300
+findtime = 60
+maxretry = 3
+backend  = auto
+
+[vsftpd]
+enabled  = true
+filter   = vsftpd
+port     = ftp
+logpath  = /var/log/vsftpd.log
+action   = nftables[name=ftp-ban, port=ftp, protocol=tcp]   # ban via nft
