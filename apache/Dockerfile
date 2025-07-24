@@ -13,6 +13,9 @@ RUN apt-get update && \
 
 ENV APACHE_LOG_DIR=/usr/local/apache2/logs
 RUN mkdir -p $APACHE_LOG_DIR
+RUN mkdir -p $APACHE_LOG_DIR/evasive \
+    && chown -R daemon:daemon $APACHE_LOG_DIR/evasive
+
 
 RUN mkdir -p /var/run/mod_evasive \
     && chown -R www-data:www-data /var/run/mod_evasive
@@ -24,7 +27,9 @@ COPY certs/                        /usr/local/apache2/conf/certs/
 
 VOLUME /usr/local/apache2/htdocs
 
-
-
 EXPOSE 80 443
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
 

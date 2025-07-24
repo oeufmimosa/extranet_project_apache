@@ -27,6 +27,7 @@ services:
     volumes:
       - ./apache/certs:/usr/local/apache2/conf/certs
       - ./web-data:/usr/local/apache2/htdocs
+      - ./logs:/usr/local/apache2/logs
     networks:
       extranet-net:
         aliases:
