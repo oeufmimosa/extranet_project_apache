@@ -1,0 +1,15 @@
+[apache-evasive]
+enabled = true
+port    = http,https
+filter  = apache-evasive
+logpath = /var/log/apache2/error_admin.log
+          /var/log/apache2/error_extranet.log
+backend = polling
+ignoremissing = true
+maxretry = 3
+bantime  = 600
+findtime = 600
+
+[sshd]
+backend= systemd
+enabled = true

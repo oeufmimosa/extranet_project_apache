@@ -25,9 +25,8 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./apache/certs:/usr/local/apache2/conf/certs
-      - ./web-data:/usr/local/apache2/htdocs
-      - ./logs:/usr/local/apache2/logs
+      - ./apache/certs:/etc/ssl/certs   
+      - ./web-data:/var/www/html  
     networks:
       extranet-net:
         aliases:
@@ -37,6 +36,8 @@ services:
         aliases:               
           - extranet.rainbowbank.com
           - admin.rainbowbank.com
+    cap_add:
+      - NET_ADMIN
 
 
 

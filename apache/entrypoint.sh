@@ -1,8 +1,10 @@
 #!/bin/sh
 set -e
 
-mkdir -p /usr/local/apache2/logs/evasive
 
-chown -R www-data:www-data /usr/local/apache2/logs/evasive || true
+touch /var/log/apache2/error_admin.log
+touch /var/log/apache2/error_extranet.log
 
-exec httpd -DFOREGROUND
+service fail2ban start
+
+exec apache2 -DFOREGROUND
